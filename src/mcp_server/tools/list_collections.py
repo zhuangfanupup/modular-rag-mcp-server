@@ -50,6 +50,8 @@ TOOL_INPUT_SCHEMA: Dict[str, Any] = {
     "required": [],
 }
 
+EXECUTE_TIMEOUT_SECONDS = 20.0
+
 
 @dataclass
 class CollectionInfo:
@@ -287,9 +289,22 @@ class ListCollectionsTool:
         try:
             # Run blocking ChromaDB I/O in a thread to avoid blocking
             # the async event loop / MCP stdio transport
-            collections = await asyncio.to_thread(
-                self.list_collections, include_stats,
+            worker = asyncio.create_task(
+                asyncio.to_thread(self.list_collections, include_stats=include_stats)
             )
+            done, _ = await asyncio.wait({worker}, timeout=EXECUTE_TIMEOUT_SECONDS)
+            if not done:
+                return types.CallToolResult(
+                    content=[
+                        types.TextContent(
+                            type="text",
+                            text="Error listing collections: operation timed out",
+                        )
+                    ],
+                    isError=True,
+                )
+
+            collections = worker.result()
             response_text = self.format_response(collections)
             
             return types.CallToolResult(

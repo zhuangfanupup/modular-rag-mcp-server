@@ -285,14 +285,14 @@ def main() -> int:
     # Print summary
     print_summary(results, args.verbose)
     
-    # Determine exit code
+    # Determine exit code.
+    # Note: configuration/path validation failures already return 2 earlier.
+    # For processing failures (even if all files fail), return 1 so callers
+    # can distinguish runtime ingestion errors from CLI/configuration errors.
     successful = sum(1 for r in results if r.success)
     if successful == len(results):
         return 0  # All successful
-    elif successful > 0:
-        return 1  # Partial failure
-    else:
-        return 2  # Complete failure
+    return 1  # Partial or complete processing failure
 
 
 if __name__ == "__main__":

@@ -241,7 +241,7 @@ class TestDataIngestion:
         print("First run STDOUT:", result1.stdout)
         
         # Skip test if first run failed
-        if result1.returncode == 2:
+        if result1.returncode != 0:
             pytest.skip("First ingestion failed - cannot test skip behavior")
         
         # Second run - should skip
@@ -268,7 +268,7 @@ class TestDataIngestion:
         )
         
         # Skip test if first run failed
-        if result1.returncode == 2:
+        if result1.returncode != 0:
             pytest.skip("First ingestion failed - cannot test force behavior")
         
         # Second run with force - should process again

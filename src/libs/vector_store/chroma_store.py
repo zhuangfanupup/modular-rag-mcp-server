@@ -6,6 +6,7 @@ a lightweight, open-source embedding database designed for local-first deploymen
 
 from __future__ import annotations
 
+import gc
 import logging
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Dict, List, Optional
@@ -519,3 +520,43 @@ class ChromaStore(BaseVectorStore):
         
         logger.debug(f"Retrieved {len([r for r in output if r])} of {len(ids)} records by IDs")
         return output
+
+    def close(self) -> None:
+        """Best-effort release of Chroma resources to avoid file-handle leaks on Windows."""
+        try:
+            # Drop references first.
+            self.collection = None  # type: ignore[assignment]
+        except Exception:
+            pass
+
+        client = getattr(self, "client", None)
+        if client is None:
+            return
+
+        try:
+            # Some chromadb versions expose a private system object with stop().
+            system = getattr(client, "_system", None)
+            if system is not None and hasattr(system, "stop"):
+                system.stop()
+        except Exception:
+            pass
+
+        try:
+            if hasattr(client, "close"):
+                client.close()  # type: ignore[call-arg]
+        except Exception:
+            pass
+
+        try:
+            self.client = None  # type: ignore[assignment]
+        except Exception:
+            pass
+
+        gc.collect()
+
+    def __del__(self) -> None:
+        """Ensure resources are released during garbage collection."""
+        try:
+            self.close()
+        except Exception:
+            pass

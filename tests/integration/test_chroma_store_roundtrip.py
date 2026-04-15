@@ -47,6 +47,10 @@ def chroma_store(test_settings):
         store.clear()
     except Exception:
         pass
+    try:
+        store.close()
+    except Exception:
+        pass
 
 
 class TestChromaStoreBasicOperations:
@@ -375,6 +379,8 @@ class TestChromaStorePersistence:
         
         # Cleanup
         store2.clear()
+        store2.close()
+        store1.close()
 
 
 class TestChromaStoreMetadataSanitization:

@@ -68,6 +68,9 @@ TOOL_INPUT_SCHEMA: Dict[str, Any] = {
     "required": ["query"],
 }
 
+# Keep MCP round-trips bounded so one slow dependency does not stall the session.
+EXECUTE_TIMEOUT_SECONDS = 25.0
+
 
 @dataclass
 class QueryKnowledgeHubConfig:
@@ -468,10 +471,13 @@ async def query_knowledge_hub_handler(
     tool = get_tool_instance()
     
     try:
-        response = await tool.execute(
-            query=query,
-            top_k=top_k,
-            collection=collection,
+        response = await asyncio.wait_for(
+            tool.execute(
+                query=query,
+                top_k=top_k,
+                collection=collection,
+            ),
+            timeout=EXECUTE_TIMEOUT_SECONDS,
         )
         
         # Use to_mcp_content() which handles multimodal (text + images)
@@ -489,6 +495,19 @@ async def query_knowledge_hub_handler(
                 types.TextContent(
                     type="text",
                     text=f"参数错误: {e}",
+                )
+            ],
+            isError=True,
+        )
+    except asyncio.TimeoutError:
+        return types.CallToolResult(
+            content=[
+                types.TextContent(
+                    type="text",
+                    text=(
+                        "Query timed out while waiting for backend services. "
+                        "Please retry or reduce top_k."
+                    ),
                 )
             ],
             isError=True,

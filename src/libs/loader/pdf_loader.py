@@ -125,12 +125,13 @@ class PdfLoader(BaseLoader):
                 text_content, images_metadata = self._extract_and_process_images(
                     path, text_content, doc_hash
                 )
-                if images_metadata:
-                    metadata["images"] = images_metadata
+                # Keep schema stable: include images key even when extraction yields no images.
+                metadata["images"] = images_metadata
             except Exception as e:
                 logger.warning(
                     f"Image extraction failed for {path}, continuing with text-only: {e}"
                 )
+                metadata["images"] = []
         
         return Document(
             id=doc_id,

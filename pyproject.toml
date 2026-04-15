@@ -10,8 +10,9 @@ readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }
 authors = [
-    { name = "Your Name", email = "your.email@example.com" }
+    { name = "zhuangfanupup" }
 ]
+urls = { Repository = "https://github.com/zhuangfanupup/modular-rag-mcp-server.git" }
 keywords = ["mcp", "rag", "retrieval", "llm", "knowledge-base"]
 classifiers = [
     "Development Status :: 3 - Alpha",

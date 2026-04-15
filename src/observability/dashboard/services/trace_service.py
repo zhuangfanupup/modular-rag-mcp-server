@@ -84,6 +84,14 @@ class TraceService:
             stage_data = s.get("data", {})
             if not isinstance(stage_data, dict):
                 stage_data = {}
+            if not stage_data:
+                # Backward compatibility: some legacy traces store stage payload
+                # directly on the stage object rather than under "data".
+                stage_data = {
+                    k: v
+                    for k, v in s.items()
+                    if k not in {"stage", "timestamp", "elapsed_ms", "data"}
+                }
             timings.append(
                 {
                     "stage_name": s.get("stage"),

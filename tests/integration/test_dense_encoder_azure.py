@@ -21,7 +21,14 @@ from src.libs.embedding.embedding_factory import EmbeddingFactory
 @pytest.fixture(scope="module")
 def settings():
     """Load settings from config file."""
-    return load_settings("config/settings.yaml")
+    s = load_settings("config/settings.yaml")
+    if s.embedding.provider != "azure":
+        pytest.skip("Azure integration tests require embedding.provider=azure")
+    if not s.embedding.api_key or "YOUR_" in s.embedding.api_key:
+        pytest.skip("Azure integration tests require a real embedding api_key")
+    if not s.embedding.azure_endpoint or "YOUR_" in s.embedding.azure_endpoint:
+        pytest.skip("Azure integration tests require a real azure_endpoint")
+    return s
 
 
 @pytest.fixture(scope="module")

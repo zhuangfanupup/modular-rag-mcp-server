@@ -35,7 +35,14 @@ class TestIngestionPipeline:
     @pytest.fixture
     def settings(self):
         """Load settings from config file."""
-        return load_settings("config/settings.yaml")
+        s = load_settings("config/settings.yaml")
+        if s.llm.provider != "azure" or s.embedding.provider != "azure":
+            pytest.skip("Ingestion integration tests require azure llm+embedding providers")
+        if not s.llm.api_key or "YOUR_" in s.llm.api_key:
+            pytest.skip("Ingestion integration tests require real llm api_key")
+        if not s.embedding.api_key or "YOUR_" in s.embedding.api_key:
+            pytest.skip("Ingestion integration tests require real embedding api_key")
+        return s
     
     @pytest.fixture
     def complex_pdf_path(self):
@@ -219,7 +226,14 @@ class TestPipelineComponents:
     @pytest.fixture
     def settings(self):
         """Load settings from config file."""
-        return load_settings("config/settings.yaml")
+        s = load_settings("config/settings.yaml")
+        if s.llm.provider != "azure" or s.embedding.provider != "azure":
+            pytest.skip("Ingestion integration tests require azure llm+embedding providers")
+        if not s.llm.api_key or "YOUR_" in s.llm.api_key:
+            pytest.skip("Ingestion integration tests require real llm api_key")
+        if not s.embedding.api_key or "YOUR_" in s.embedding.api_key:
+            pytest.skip("Ingestion integration tests require real embedding api_key")
+        return s
     
     def test_settings_loads_correctly(self, settings):
         """Verify settings are loaded with expected values."""

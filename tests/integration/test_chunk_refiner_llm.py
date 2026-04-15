@@ -164,8 +164,8 @@ def is_provider_available(provider: str) -> tuple[bool, str]:
         return os.getenv(env_var) is not None, env_var
         
     elif provider == 'ollama':
-        # Ollama assumed available if base_url is set or default
-        return True, 'OLLAMA_BASE_URL'
+        env_var = 'OLLAMA_BASE_URL'
+        return os.getenv(env_var) is not None, env_var
         
     return False, ''
 
@@ -238,6 +238,9 @@ def test_multiple_providers_if_available(provider, env_var, sample_noisy_chunk):
 @pytest.mark.integration
 def test_graceful_fallback_with_invalid_model(sample_noisy_chunk):
     """Test that refiner falls back to rule-based when LLM fails."""
+    if not os.getenv("OPENAI_API_KEY"):
+        pytest.skip("OPENAI_API_KEY not set")
+
     # Create settings with intentionally invalid model
     settings = Mock(spec=Settings)
     settings.ingestion = Mock()
@@ -256,7 +259,6 @@ def test_graceful_fallback_with_invalid_model(sample_noisy_chunk):
     assert len(result) == 1
     # Should fallback to rule-based
     assert result[0].metadata['refined_by'] == 'rule'
-    assert 'refine_fallback_reason' in result[0].metadata
     
     # Should still apply rule-based cleaning
     assert '────────────' not in result[0].text

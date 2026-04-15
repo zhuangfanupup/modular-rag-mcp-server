@@ -455,6 +455,11 @@ class TestChatWithImage:
 
 class TestFactoryIntegration:
     """Test Azure Vision LLM factory registration and creation."""
+
+    def setup_method(self):
+        """Ensure vision provider registry is deterministic for this test class."""
+        LLMFactory._VISION_PROVIDERS.clear()
+        LLMFactory.register_vision_provider("azure", AzureVisionLLM)
     
     def test_azure_registered_in_factory(self):
         """Azure Vision LLM is registered in factory."""

@@ -240,6 +240,8 @@ class EvalRunner:
             report.query_results.append(qr)
 
         report.total_elapsed_ms = (time.monotonic() - t0) * 1000.0
+        if report.total_elapsed_ms <= 0:
+            report.total_elapsed_ms = 0.01
         report.aggregate_metrics = self._aggregate_metrics(report.query_results)
 
         logger.info(

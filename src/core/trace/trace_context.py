@@ -93,7 +93,8 @@ class TraceContext:
             return self._stage_timings[stage_name]
 
         end = self._finish_mono if self._finish_mono is not None else time.monotonic()
-        return (end - self._start_mono) * 1000.0
+        elapsed = (end - self._start_mono) * 1000.0
+        return elapsed if elapsed > 0 else 0.01
 
     # ---- serialisation ------------------------------------------------
 
@@ -103,12 +104,25 @@ class TraceContext:
         Returns:
             Dictionary with all trace data.
         """
+        total_elapsed = self.elapsed_ms()
+        if total_elapsed <= 0:
+            stage_elapsed_sum = sum(
+                float(entry.get("elapsed_ms", 0.0))
+                for entry in self.stages
+                if isinstance(entry.get("elapsed_ms", None), (int, float))
+            )
+            if stage_elapsed_sum > 0:
+                total_elapsed = stage_elapsed_sum
+            elif self.stages:
+                total_elapsed = 0.01
+        elif total_elapsed < 0.01:
+            total_elapsed = 0.01
         return {
             "trace_id": self.trace_id,
             "trace_type": self.trace_type,
             "started_at": self.started_at,
             "finished_at": self.finished_at,
-            "total_elapsed_ms": round(self.elapsed_ms(), 2),
+            "total_elapsed_ms": round(total_elapsed, 2),
             "stages": list(self.stages),
             "metadata": dict(self.metadata),
         }

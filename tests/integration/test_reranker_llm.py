@@ -75,7 +75,12 @@ class TestCoreRerankerAzureLLM:
     @pytest.fixture
     def settings(self):
         """Load real settings from config file."""
-        return load_settings("config/settings.yaml")
+        s = load_settings("config/settings.yaml")
+        if not s.rerank.enabled or s.rerank.provider != "llm":
+            pytest.skip("Reranker integration tests require rerank.enabled=true and provider=llm")
+        if not s.llm.api_key or "YOUR_" in s.llm.api_key:
+            pytest.skip("Reranker integration tests require a real llm api_key")
+        return s
     
     @pytest.fixture
     def test_results(self):
@@ -194,7 +199,12 @@ class TestCoreRerankerFallbackIntegration:
     @pytest.fixture
     def settings(self):
         """Load real settings from config file."""
-        return load_settings("config/settings.yaml")
+        s = load_settings("config/settings.yaml")
+        if not s.rerank.enabled or s.rerank.provider != "llm":
+            pytest.skip("Reranker integration tests require rerank.enabled=true and provider=llm")
+        if not s.llm.api_key or "YOUR_" in s.llm.api_key:
+            pytest.skip("Reranker integration tests require a real llm api_key")
+        return s
     
     @pytest.fixture
     def test_results(self):
@@ -265,7 +275,12 @@ class TestEndToEndReranking:
     @pytest.fixture
     def settings(self):
         """Load real settings from config file."""
-        return load_settings("config/settings.yaml")
+        s = load_settings("config/settings.yaml")
+        if not s.rerank.enabled or s.rerank.provider != "llm":
+            pytest.skip("Reranker integration tests require rerank.enabled=true and provider=llm")
+        if not s.llm.api_key or "YOUR_" in s.llm.api_key:
+            pytest.skip("Reranker integration tests require a real llm api_key")
+        return s
     
     def test_end_to_end_reranking_flow(self, settings):
         """Complete end-to-end test of the reranking flow.

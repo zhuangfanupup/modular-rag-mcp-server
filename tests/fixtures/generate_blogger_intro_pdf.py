@@ -1,4 +1,4 @@
-"""
+﻿"""
 Generate a PDF for blogger introduction and notes overview.
 Contains personal introduction, notes description, and sample images.
 """
@@ -24,9 +24,9 @@ def register_chinese_font():
     # Try to find a Chinese font on the system
     font_paths = [
         # Windows fonts
-        "C:/Windows/Fonts/msyh.ttc",  # 微软雅黑
-        "C:/Windows/Fonts/simsun.ttc",  # 宋体
-        "C:/Windows/Fonts/simhei.ttf",  # 黑体
+        "C:/Windows/Fonts/msyh.ttc",  # 寰蒋闆呴粦
+        "C:/Windows/Fonts/simsun.ttc",  # 瀹嬩綋
+        "C:/Windows/Fonts/simhei.ttf",  # 榛戜綋
         # Mac fonts
         "/System/Library/Fonts/PingFang.ttc",
         # Linux fonts
@@ -129,19 +129,19 @@ def generate_blogger_intro_pdf(output_path):
         leading=16
     )
     
-    # ==================== 封面页 ====================
+    # ==================== 灏侀潰椤?====================
     elements.append(Spacer(1, 1.5*inch))
-    elements.append(Paragraph("不转到大模型不改名", title_style))
+    elements.append(Paragraph("涓嶈浆鍒板ぇ妯″瀷涓嶆敼鍚?, title_style))
     elements.append(Spacer(1, 0.2*inch))
-    elements.append(Paragraph("博主介绍 & 笔记说明", heading_style))
+    elements.append(Paragraph("鍗氫富浠嬬粛 & 绗旇璇存槑", heading_style))
     elements.append(Spacer(1, 0.5*inch))
     
-    # 封面信息表格
+    # 灏侀潰淇℃伅琛ㄦ牸
     cover_data = [
-        ['作者:', '不转到大模型不改名'],
-        ['平台:', '小红书 + B站'],
-        ['方向:', '大模型开发'],
-        ['文档版本:', '2026年2月'],
+        ['浣滆€?', '涓嶈浆鍒板ぇ妯″瀷涓嶆敼鍚?],
+        ['骞冲彴:', '灏忕孩涔?+ B绔?],
+        ['鏂瑰悜:', '澶фā鍨嬪紑鍙?],
+        ['鏂囨。鐗堟湰:', '2026骞?鏈?],
     ]
     cover_table = Table(cover_data, colWidths=[1.5*inch, 3.5*inch])
     cover_table.setStyle(TableStyle([
@@ -154,104 +154,104 @@ def generate_blogger_intro_pdf(output_path):
     elements.append(cover_table)
     elements.append(PageBreak())
     
-    # ==================== 第一部分：个人介绍 ====================
-    elements.append(Paragraph("1. 个人介绍", heading_style))
+    # ==================== 绗竴閮ㄥ垎锛氫釜浜轰粙缁?====================
+    elements.append(Paragraph("1. 涓汉浠嬬粛", heading_style))
     
     intro_text = """
-    小红书 + B站博主，双985学历，校招毕业后进入国内一线大厂，目前就职于外企一线大厂。主要开发语言是C++。
+    灏忕孩涔?+ B绔欏崥涓伙紝鍙?85瀛﹀巻锛屾牎鎷涙瘯涓氬悗杩涘叆鍥藉唴涓€绾垮ぇ鍘傦紝鐩墠灏辫亴浜庡浼佷竴绾垮ぇ鍘傘€備富瑕佸紑鍙戣瑷€鏄疌++銆?
     """
     elements.append(Paragraph(intro_text.strip(), body_style))
     
     achievement_text = """
-    通过自学，从0AI基础出发，自学掌握了Agent、RAG等技术，成功拿到了6个大模型的offer，其中包括：
+    閫氳繃鑷锛屼粠0AI鍩虹鍑哄彂锛岃嚜瀛︽帉鎻′簡Agent銆丷AG绛夋妧鏈紝鎴愬姛鎷垮埌浜?涓ぇ妯″瀷鐨刼ffer锛屽叾涓寘鎷細
     """
     elements.append(Paragraph(achievement_text.strip(), body_style))
     
-    # Offer列表
-    offers = [
-        "京东（算法岗）",
-        "千问C端",
-        "网龙",
-        "SAP（世界500强外企）",
-        "平安证券",
-        "华林证券"
+    # Offer鍒楄〃
+    milestones = [
+        "浜笢锛堢畻娉曞矖锛?,
+        "鍗冮棶C绔?,
+        "缃戦緳",
+        "SAP锛堜笘鐣?00寮哄浼侊級",
+        "骞冲畨璇佸埜",
+        "鍗庢灄璇佸埜"
     ]
-    for offer in offers:
-        elements.append(Paragraph(f"• {offer}", list_style))
+    for item in milestones:
+        elements.append(Paragraph(f"鈥?{item}", list_style))
     
     elements.append(Spacer(1, 0.3*inch))
     
-    # ==================== 第二部分：笔记介绍 ====================
-    elements.append(Paragraph("2. 笔记介绍", heading_style))
+    # ==================== 绗簩閮ㄥ垎锛氱瑪璁颁粙缁?====================
+    elements.append(Paragraph("2. 绗旇浠嬬粛", heading_style))
     
     notes_intro = """
-    不转到大模型不改名在自学的过程中，把所有自学过程中遇到的问题，总结在了文档中。目前文档已经有12万字。
+    涓嶈浆鍒板ぇ妯″瀷涓嶆敼鍚嶅湪鑷鐨勮繃绋嬩腑锛屾妸鎵€鏈夎嚜瀛﹁繃绋嬩腑閬囧埌鐨勯棶棰橈紝鎬荤粨鍦ㄤ簡鏂囨。涓€傜洰鍓嶆枃妗ｅ凡缁忔湁12涓囧瓧銆?
     """
     elements.append(Paragraph(notes_intro.strip(), body_style))
     
     design_concept = """
-    文档设计的理念是：针对于0基础学员，以应用方向为主，算法方向为辅助，帮助0基础的同学快速转行到大模型。
-    笔记设计的最大的理念是：<b>突出重点，讲清楚每个知识点为什么要考，怎么复习，要复习多深入。</b>
+    鏂囨。璁捐鐨勭悊蹇垫槸锛氶拡瀵逛簬0鍩虹瀛﹀憳锛屼互搴旂敤鏂瑰悜涓轰富锛岀畻娉曟柟鍚戜负杈呭姪锛屽府鍔?鍩虹鐨勫悓瀛﹀揩閫熻浆琛屽埌澶фā鍨嬨€?
+    绗旇璁捐鐨勬渶澶х殑鐞嗗康鏄細<b>绐佸嚭閲嶇偣锛岃娓呮姣忎釜鐭ヨ瘑鐐逛负浠€涔堣鑰冿紝鎬庝箞澶嶄範锛岃澶嶄範澶氭繁鍏ャ€?/b>
     """
     elements.append(Paragraph(design_concept.strip(), body_style))
     
     elements.append(Spacer(1, 0.2*inch))
     
-    # ==================== 笔记内容详解 ====================
-    elements.append(Paragraph("笔记内容包括：", subheading_style))
+    # ==================== 绗旇鍐呭璇﹁В ====================
+    elements.append(Paragraph("绗旇鍐呭鍖呮嫭锛?, subheading_style))
     
-    # 2.1 面试真题
-    elements.append(Paragraph("<b>2.1 面试真题（20+公司）</b>", body_style))
-    interview_content = """
-    包含完整的岗位JD（帮助大家有针对性复习）、问题解析、参考资料、个人反思、视频讲解。
+    # 2.1 闈㈣瘯鐪熼
+    elements.append(Paragraph("<b>2.1 闈㈣瘯鐪熼锛?0+鍏徃锛?/b>", body_style))
+    case_content = """
+    鍖呭惈瀹屾暣鐨勫矖浣岼D锛堝府鍔╁ぇ瀹舵湁閽堝鎬у涔狅級銆侀棶棰樿В鏋愩€佸弬鑰冭祫鏂欍€佷釜浜哄弽鎬濄€佽棰戣瑙ｃ€?
     """
-    elements.append(Paragraph(interview_content.strip(), list_style))
+    elements.append(Paragraph(case_content.strip(), list_style))
     
-    # 2.2 八股内容
-    elements.append(Paragraph("<b>2.2 八股内容</b>", body_style))
+    # 2.2 鍏偂鍐呭
+    elements.append(Paragraph("<b>2.2 鍏偂鍐呭</b>", body_style))
     bagu_content = """
-    涵盖Agent、RAG、模型基础、微调、推理部署等内容。最重要的思想是完全根据面试内容，
-    针对性总结八股——面试常考的就总结的深入，不常考的就总结的少，突出重点和思路，
-    不想让转行的人陷入"感觉什么都要学，不知道学多深"的困境。
+    娑电洊Agent銆丷AG銆佹ā鍨嬪熀纭€銆佸井璋冦€佹帹鐞嗛儴缃茬瓑鍐呭銆傛渶閲嶈鐨勬€濇兂鏄畬鍏ㄦ牴鎹潰璇曞唴瀹癸紝
+    閽堝鎬ф€荤粨鍏偂鈥斺€旈潰璇曞父鑰冪殑灏辨€荤粨鐨勬繁鍏ワ紝涓嶅父鑰冪殑灏辨€荤粨鐨勫皯锛岀獊鍑洪噸鐐瑰拰鎬濊矾锛?
+    涓嶆兂璁╄浆琛岀殑浜洪櫡鍏?鎰熻浠€涔堥兘瑕佸锛屼笉鐭ラ亾瀛﹀娣?鐨勫洶澧冦€?
     """
     elements.append(Paragraph(bagu_content.strip(), list_style))
     
-    # 2.3 项目
-    elements.append(Paragraph("<b>2.3 自研RAG项目</b>", body_style))
+    # 2.3 椤圭洰
+    elements.append(Paragraph("<b>2.3 鑷爺RAG椤圭洰</b>", body_style))
     project_content = """
-    自研了一个RAG项目，包含完整的项目技术开发文档和代码。项目不光总结该项目常见的面试问题和解析、
-    简历如何写、项目设计的代码和技术详解。更重要的是总结讲解自己写项目的思路，不光提供项目，
-    更重要提供写项目的思路，学会以后也能轻松扩展。同样该内容包含视频讲解。
+    鑷爺浜嗕竴涓猂AG椤圭洰锛屽寘鍚畬鏁寸殑椤圭洰鎶€鏈紑鍙戞枃妗ｅ拰浠ｇ爜銆傞」鐩笉鍏夋€荤粨璇ラ」鐩父瑙佺殑闈㈣瘯闂鍜岃В鏋愩€?
+    绠€鍘嗗浣曞啓銆侀」鐩璁＄殑浠ｇ爜鍜屾妧鏈瑙ｃ€傛洿閲嶈鐨勬槸鎬荤粨璁茶В鑷繁鍐欓」鐩殑鎬濊矾锛屼笉鍏夋彁渚涢」鐩紝
+    鏇撮噸瑕佹彁渚涘啓椤圭洰鐨勬€濊矾锛屽浼氫互鍚庝篃鑳借交鏉炬墿灞曘€傚悓鏍疯鍐呭鍖呭惈瑙嗛璁茶В銆?
     """
     elements.append(Paragraph(project_content.strip(), list_style))
     
-    # 2.4 参考资料
-    elements.append(Paragraph("<b>2.4 参考资料</b>", body_style))
+    # 2.4 鍙傝€冭祫鏂?
+    elements.append(Paragraph("<b>2.4 鍙傝€冭祫鏂?/b>", body_style))
     reference_content = """
-    将自学过程中遇到的好的参考资料、视频，总结在文档中。让大家做到只管照着笔记学就可以。
+    灏嗚嚜瀛﹁繃绋嬩腑閬囧埌鐨勫ソ鐨勫弬鑰冭祫鏂欍€佽棰戯紝鎬荤粨鍦ㄦ枃妗ｄ腑銆傝澶у鍋氬埌鍙鐓х潃绗旇瀛﹀氨鍙互銆?
     """
     elements.append(Paragraph(reference_content.strip(), list_style))
     
-    # 2.5 持续更新
-    elements.append(Paragraph("<b>2.5 持续更新</b>", body_style))
+    # 2.5 鎸佺画鏇存柊
+    elements.append(Paragraph("<b>2.5 鎸佺画鏇存柊</b>", body_style))
     update_content = """
-    从文档上线目前已经更新了2个多月了。博主每天下班就在整理笔记，做到和大家一起学习。
-    过完年也会更新更多面经、算法相关内容，持续更新，共同进步，但从未涨价。
+    浠庢枃妗ｄ笂绾跨洰鍓嶅凡缁忔洿鏂颁簡2涓鏈堜簡銆傚崥涓绘瘡澶╀笅鐝氨鍦ㄦ暣鐞嗙瑪璁帮紝鍋氬埌鍜屽ぇ瀹朵竴璧峰涔犮€?
+    杩囧畬骞翠篃浼氭洿鏂版洿澶氶潰缁忋€佺畻娉曠浉鍏冲唴瀹癸紝鎸佺画鏇存柊锛屽叡鍚岃繘姝ワ紝浣嗕粠鏈定浠枫€?
     """
     elements.append(Paragraph(update_content.strip(), list_style))
     
     elements.append(Spacer(1, 0.2*inch))
     
-    # 价格信息
+    # 浠锋牸淇℃伅
     price_info = """
-    <b>笔记目前在小红书链接售卖，价格199元。</b>
+    <b>绗旇鐩墠鍦ㄥ皬绾功閾炬帴鍞崠锛屼环鏍?99鍏冦€?/b>
     """
     elements.append(Paragraph(price_info, body_style))
     
     elements.append(PageBreak())
     
-    # ==================== 图片1：设计思路 ====================
-    elements.append(Paragraph("图片1：设计思路", heading_style))
+    # ==================== 鍥剧墖1锛氳璁℃€濊矾 ====================
+    elements.append(Paragraph("鍥剧墖1锛氳璁℃€濊矾", heading_style))
     
     # Get image paths
     image_paths = get_image_paths()
@@ -275,12 +275,12 @@ def generate_blogger_intro_pdf(output_path):
         img_flowable1 = Image(str(design_img_path), width=img_width, height=img_height)
         elements.append(img_flowable1)
     else:
-        elements.append(Paragraph(f"[图片未找到: {design_img_path}]", body_style))
+        elements.append(Paragraph(f"[鍥剧墖鏈壘鍒? {design_img_path}]", body_style))
     
     elements.append(PageBreak())
     
-    # ==================== 图片2：项目介绍 ====================
-    elements.append(Paragraph("图片2：项目介绍", heading_style))
+    # ==================== 鍥剧墖2锛氶」鐩粙缁?====================
+    elements.append(Paragraph("鍥剧墖2锛氶」鐩粙缁?, heading_style))
     
     # Add project intro image (use external image)
     project_img_path = image_paths['project_intro']
@@ -301,7 +301,7 @@ def generate_blogger_intro_pdf(output_path):
         img_flowable2 = Image(str(project_img_path), width=img_width, height=img_height)
         elements.append(img_flowable2)
     else:
-        elements.append(Paragraph(f"[图片未找到: {project_img_path}]", body_style))
+        elements.append(Paragraph(f"[鍥剧墖鏈壘鍒? {project_img_path}]", body_style))
 
     # Build the PDF
     doc.build(elements)
@@ -322,3 +322,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

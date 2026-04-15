@@ -8,6 +8,7 @@ This module provides the ProtocolHandler class that encapsulates:
 
 from __future__ import annotations
 
+import asyncio
 from dataclasses import dataclass, field
 from typing import Any, Callable, Dict, List, Optional
 
@@ -15,6 +16,8 @@ from mcp import types
 from mcp.server.lowlevel import Server
 
 from src.observability.logger import get_logger
+
+TOOL_EXECUTE_TIMEOUT_SECONDS = 15.0
 
 
 # JSON-RPC 2.0 Error Codes
@@ -135,7 +138,10 @@ class ProtocolHandler:
         tool = self.tools[name]
         try:
             self._logger.info("Executing tool: %s", name)
-            result = await tool.handler(**arguments)
+            result = await asyncio.wait_for(
+                tool.handler(**arguments),
+                timeout=TOOL_EXECUTE_TIMEOUT_SECONDS,
+            )
 
             # Handle different return types
             if isinstance(result, types.CallToolResult):
@@ -161,6 +167,17 @@ class ProtocolHandler:
                     types.TextContent(
                         type="text",
                         text=f"Error: Invalid parameters - {e}",
+                    )
+                ],
+                isError=True,
+            )
+        except asyncio.TimeoutError:
+            self._logger.error("Tool execution timed out: %s", name)
+            return types.CallToolResult(
+                content=[
+                    types.TextContent(
+                        type="text",
+                        text=f"Error: Tool '{name}' timed out",
                     )
                 ],
                 isError=True,
@@ -197,15 +214,27 @@ def _register_default_tools(protocol_handler: ProtocolHandler) -> None:
     """
     # Import and register query_knowledge_hub tool
     from src.mcp_server.tools.query_knowledge_hub import register_tool as register_query_tool
-    register_query_tool(protocol_handler)
+    try:
+        register_query_tool(protocol_handler)
+    except ValueError as e:
+        if "already registered" not in str(e):
+            raise
     
     # Import and register list_collections tool
     from src.mcp_server.tools.list_collections import register_tool as register_list_tool
-    register_list_tool(protocol_handler)
+    try:
+        register_list_tool(protocol_handler)
+    except ValueError as e:
+        if "already registered" not in str(e):
+            raise
     
     # Import and register get_document_summary tool
     from src.mcp_server.tools.get_document_summary import register_tool as register_summary_tool
-    register_summary_tool(protocol_handler)
+    try:
+        register_summary_tool(protocol_handler)
+    except ValueError as e:
+        if "already registered" not in str(e):
+            raise
 
 
 def create_mcp_server(
